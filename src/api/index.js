@@ -10,3 +10,53 @@ export async function fetchAllBooks() {
     return [];
   }
 }
+
+export async function registerUser(username, password) {
+  try {
+    const response = await fetch(`${BASE_URL}/users/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Error registering user:", err);
+    return { success: false };
+  }
+}
+
+export async function loginUser(username, password) {
+  try {
+    const response = await fetch(`${BASE_URL}/users/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Error logging in:", err);
+    return { success: false };
+  }
+}
+
+export async function fetchUserDetails(token) {
+  try {
+    const response = await fetch(`${BASE_URL}/users/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Error fetching user details:", err);
+    return null;
+  }
+}
+

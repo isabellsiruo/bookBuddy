@@ -3,8 +3,7 @@ import { fetchAllBooks } from '../api';
 import BookCard from '../components/BookCard';
 import { Grid, Typography, Container } from '@mui/material';
 
-
-export default function AllBooks() {
+export default function Books() {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
@@ -21,7 +20,7 @@ export default function AllBooks() {
         All Books
       </Typography>
       <Grid container spacing={2}>
-        {books.map((book) => (
+        {Array.isArray(books) && books.map((book) => (
           <Grid item xs={12} sm={6} md={4} key={book.id}>
             <BookCard book={book} />
           </Grid>
@@ -30,5 +29,3 @@ export default function AllBooks() {
     </Container>
   );
 }
-
-  
