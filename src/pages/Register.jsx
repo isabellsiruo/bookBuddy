@@ -1,42 +1,53 @@
-import { useState } from 'react';
-import { registerUser } from '../api';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  async function handleRegister(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const result = await registerUser(username, password);
-    if (result.success) {
-      setMessage('Registration successful! You can now log in.');
-    } else {
-      setMessage(result.error || 'Registration failed.');
+
+    try {
+      const response = await fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+        navigate("/account");
+      } else {
+        alert(result.message || "Registration failed");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
     }
   }
 
   return (
     <div>
       <h2>Register Page</h2>
-      <form onSubmit={handleRegister}>
+      <form onSubmit={handleSubmit}>
         <input 
-          type="text" 
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email" 
+          placeholder="Email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)} 
           required 
         />
         <input 
           type="password" 
-          placeholder="Password"
+          placeholder="Password" 
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)} 
           required 
         />
         <button type="submit">Register</button>
       </form>
-      <p>{message}</p>
     </div>
   );
 }
