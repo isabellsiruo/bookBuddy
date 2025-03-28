@@ -1,1 +1,9 @@
-/* TODO - add your code to create a functional React component that renders a login form */
+export default function Login() {
+    return (
+      <div>
+        <h2>Login Page</h2>
+        <p>This is where the login form will go.</p>
+      </div>
+    );
+  }
+  

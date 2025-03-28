@@ -1,1 +1,9 @@
-/* TODO - add your code to create a functional React component that renders a registration form */
+export default function Register() {
+    return (
+      <div>
+        <h2>Register Page</h2>
+        <p>This is where the registration form will go.</p>
+      </div>
+    );
+  }
+  
