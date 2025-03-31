@@ -8,17 +8,18 @@ export default function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     try {
       const response = await fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username: email, password }),
       });
 
       const result = await response.json();
       if (result.token) {
+        //save token
         localStorage.setItem("token", result.token);
+        //redirect
         navigate("/account");
       } else {
         alert(result.message || "Registration failed");

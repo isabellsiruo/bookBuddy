@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Card, CardContent, Typography, CardActions, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 

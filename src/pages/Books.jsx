@@ -4,14 +4,32 @@ import BookCard from '../components/BookCard';
 import { Grid, Typography, Container } from '@mui/material';
 
 export default function Books() {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+
     async function getBooks() {
-      const allBooks = await fetchAllBooks();
-      setBooks(allBooks);
+      const allBooks = await fetchAllBooks(token);
+      console.log("Books API response:", allBooks);
+
+      // Only update state if response is a valid array
+      if (Array.isArray(allBooks)) {
+        setBooks(allBooks);
+      } else {
+        setBooks([]); // or null
+      }
+
+      setLoading(false);
     }
-    getBooks();
+
+    if (token) {
+      getBooks();
+    } else {
+      console.log("No token found");
+      setLoading(false);
+    }
   }, []);
 
   return (
@@ -19,13 +37,20 @@ export default function Books() {
       <Typography variant="h4" gutterBottom sx={{ marginTop: 2 }}>
         All Books
       </Typography>
-      <Grid container spacing={2}>
-        {Array.isArray(books) && books.map((book) => (
-          <Grid item xs={12} sm={6} md={4} key={book.id}>
-            <BookCard book={book} />
-          </Grid>
-        ))}
-      </Grid>
+
+      {loading ? (
+        <Typography>Loading books...</Typography>
+      ) : books && books.length > 0 ? (
+        <Grid container spacing={2}>
+          {books.map((book) => (
+            <Grid item xs={12} sm={6} md={4} key={book.id}>
+              <BookCard book={book} />
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Typography>No books found or not logged in.</Typography>
+      )}
     </Container>
   );
 }
