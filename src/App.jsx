@@ -12,7 +12,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/books" element={<Books />} />
-        <Route path="/singlebook/:id" element={<SingleBook />} />
+        <Route path="/books/:id" element={<SingleBook />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/account" element={<Account />} />
@@ -20,4 +20,5 @@ export default function App() {
     </Router>
   );
 }
+
 

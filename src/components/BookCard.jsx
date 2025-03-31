@@ -10,7 +10,7 @@ export default function BookCard({ book }) {
         <Typography color="text.secondary">by {book.author}</Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" component={Link} to={`/singlebook/${book.id}`}>
+        <Button size="small" component={Link} to={`/books/${book.id}`}>
           View Details
         </Button>
       </CardActions>
@@ -18,3 +18,11 @@ export default function BookCard({ book }) {
   );
 }
 
+// ✅ Add prop types for ESLint and dev clarity
+BookCard.propTypes = {
+  book: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+  }).isRequired,
+};
