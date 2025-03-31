@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Container, Typography, Card, CardMedia, CardContent, CircularProgress } from "@mui/material";
 
 export default function SingleBook() {
   const { id } = useParams();
@@ -9,43 +10,44 @@ export default function SingleBook() {
   useEffect(() => {
     async function fetchBook() {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/books/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const result = await response.json();
-        console.log("Single Book API response:", result);
-        setBook(result);
+        const res = await fetch(`https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/books/${id}`);
+        const data = await res.json();
+        console.log("Single Book API response:", data);
+        setBook(data);
       } catch (err) {
-        console.error("Error fetching book:", err);
+        console.error("Error fetching single book:", err);
       } finally {
         setLoading(false);
       }
     }
-
     fetchBook();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return <Container><CircularProgress /></Container>;
+  }
 
-  if (!book) return <p>Book not found</p>;
+  if (!book || !book.title) {
+    return <Container><Typography>Book not found</Typography></Container>;
+  }
 
   return (
-    <div>
-      <h2>{book.title}</h2>
-      <p><strong>Author:</strong> {book.author}</p>
-      <p><strong>Description:</strong> {book.description}</p>
-      <img
-        src={book.coverimage}
-        alt={book.title}
-        style={{ width: "200px", marginTop: "1rem" }}
-      />
-    </div>
+    <Container sx={{ mt: 4 }}>
+      <Card sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, p: 2 }}>
+        <CardMedia
+          component="img"
+          image={book.coverimage}
+          alt={book.title}
+          sx={{ width: { xs: "100%", md: 300 }, height: "auto", objectFit: "contain" }}
+        />
+        <CardContent>
+          <Typography variant="h4" gutterBottom>{book.title}</Typography>
+          <Typography variant="h6" color="text.secondary" gutterBottom><strong>Author:</strong> {book.author}</Typography>
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            <strong>Description:</strong> {book.description}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
-

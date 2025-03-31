@@ -26,9 +26,6 @@ export async function fetchAllBooks(token) {
 }
 
 
-
-
-
 export async function registerUser(username, password) {
   try {
     const response = await fetch(`${BASE_URL}/users/register`, {

@@ -18,7 +18,6 @@ export default function BookCard({ book }) {
   );
 }
 
-// ✅ Add prop types for ESLint and dev clarity
 BookCard.propTypes = {
   book: PropTypes.shape({
     id: PropTypes.number.isRequired,

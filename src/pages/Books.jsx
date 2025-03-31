@@ -14,11 +14,11 @@ export default function Books() {
       const allBooks = await fetchAllBooks(token);
       console.log("Books API response:", allBooks);
 
-      // Only update state if response is a valid array
+    
       if (Array.isArray(allBooks)) {
         setBooks(allBooks);
       } else {
-        setBooks([]); // or null
+        setBooks([]); 
       }
 
       setLoading(false);
