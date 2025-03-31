@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Typography, Card, CardMedia, CardContent, CircularProgress } from "@mui/material";
+import { Container, Typography, Card, CardMedia, CardContent, CircularProgress, Button } from "@mui/material";
 
 export default function SingleBook() {
   const { id } = useParams();
@@ -22,6 +22,36 @@ export default function SingleBook() {
     }
     fetchBook();
   }, [id]);
+
+  const handleCheckout = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please log in to checkout a book.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/books/${id}/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert("Book checked out successfully!");
+      } else {
+        alert(result.message || "Failed to checkout book.");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("There was an error during checkout.");
+    }
+  };
 
   if (loading) {
     return <Container><CircularProgress /></Container>;
@@ -46,8 +76,15 @@ export default function SingleBook() {
           <Typography variant="body1" sx={{ mt: 2 }}>
             <strong>Description:</strong> {book.description}
           </Typography>
+          <Button onClick={handleCheckout} variant="contained" color="primary" sx={{ mt: 2 }}>
+            Checkout Book
+          </Button>
         </CardContent>
       </Card>
     </Container>
   );
 }
+
+
+
+
