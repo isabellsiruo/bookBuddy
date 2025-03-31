@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function Account() {
   const [user, setUser] = useState(null);
+  const [checkedOutBooks, setCheckedOutBooks] = useState([]);
 
   useEffect(() => {
     async function fetchUser() {
@@ -16,9 +17,16 @@ export default function Account() {
         });
 
         const result = await response.json();
-        if (result) {
-          setUser(result);
-        }
+        setUser(result);
+
+        // Fetch the user's checked-out books
+        const booksRes = await fetch(`https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/users/${result.id}/checkedout`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        const checkedOutBooksData = await booksRes.json();
+        setCheckedOutBooks(checkedOutBooksData);
       } catch (err) {
         console.error("Error fetching user info:", err);
       }
@@ -35,7 +43,19 @@ export default function Account() {
     <div>
       <h2>Welcome, {user.email}</h2>
       <p>Your user ID is: {user.id}</p>
+
+      <h3>Checked Out Books</h3>
+      {checkedOutBooks.length > 0 ? (
+        <ul>
+          {checkedOutBooks.map((book) => (
+            <li key={book.id}>{book.title} by {book.author}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No books checked out.</p>
+      )}
     </div>
   );
 }
+
 
