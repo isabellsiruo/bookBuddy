@@ -1,17 +1,17 @@
 const BASE_URL = "https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api";
 
-
 export async function fetchAllBooks(token) {
   try {
-    const res = await fetch(`${BASE_URL}/books`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
+    const res = await fetch(`${BASE_URL}/books`, { headers });
     const data = await res.json();
-    console.log("Books API response:", data);
 
     if (Array.isArray(data)) {
       return data;
@@ -33,17 +33,16 @@ export async function registerUser(username, password) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password }), 
+      body: JSON.stringify({ username, password }),
     });
 
     const data = await response.json();
-    return data; 
+    return data;
   } catch (err) {
     console.error("Error registering user:", err);
     return { success: false };
   }
 }
-
 
 export async function loginUser(username, password) {
   try {
