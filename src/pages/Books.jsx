@@ -1,36 +1,46 @@
 import { useEffect, useState } from 'react';
 import { fetchAllBooks } from '../api';
 import BookCard from '../components/BookCard';
-import { Grid, Typography, Container } from '@mui/material';
+import { Grid, Typography, Container, TextField } from '@mui/material';
 
 export default function Books() {
-  const [books, setBooks] = useState(null);
+  const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-
     async function getBooks() {
+      const token = localStorage.getItem('token');
+      
+      // If no token, do not include 'Authorization' header in the request
       const allBooks = await fetchAllBooks(token);
       console.log("Books API response:", allBooks);
 
-    
       if (Array.isArray(allBooks)) {
         setBooks(allBooks);
+        setFilteredBooks(allBooks); // Initially show all books
       } else {
-        setBooks([]); 
+        setBooks([]);
+        setFilteredBooks([]);
       }
-
       setLoading(false);
     }
 
-    if (token) {
-      getBooks();
-    } else {
-      console.log("No token found");
-      setLoading(false);
-    }
+    getBooks();
   }, []);
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredBooks(books);
+    } else {
+      setFilteredBooks(
+        books.filter(book => 
+          book.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+  }, [searchTerm, books]);
 
   return (
     <Container>
@@ -38,19 +48,30 @@ export default function Books() {
         All Books
       </Typography>
 
+      {/* Search Bar */}
+      <TextField
+        label="Search Books"
+        variant="outlined"
+        fullWidth
+        sx={{ marginBottom: 2 }}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
       {loading ? (
         <Typography>Loading books...</Typography>
-      ) : books && books.length > 0 ? (
+      ) : filteredBooks && filteredBooks.length > 0 ? (
         <Grid container spacing={2}>
-          {books.map((book) => (
+          {filteredBooks.map((book) => (
             <Grid item xs={12} sm={6} md={4} key={book.id}>
               <BookCard book={book} />
             </Grid>
           ))}
         </Grid>
       ) : (
-        <Typography>No books found or not logged in.</Typography>
+        <Typography>No books found.</Typography>
       )}
     </Container>
   );
 }
+
